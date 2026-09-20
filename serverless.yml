@@ -1,24 +1,47 @@
+STEP 1: Create Project
+─────────────────────────────────────
+1. Go to AWS CodeBuild console
+2. Click: "Create build project"
+3. Project name: devops-react-build
+4. Source provider: GitHub
+5. Repository: devops-react-app
+6. Environment:
+   - Operating system: Ubuntu
+   - Runtime: Node.js
+   - Runtime version: 18
+7. Service role: Create new role
+8. Click: "Create build project"
+✅ DONE!
+
+STEP 2: Add Buildspec
+─────────────────────────────────────
+(Your buildspec.yml should already be in your repo)
+
+If not, create buildspec.yml in project root:
+
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      nodejs: 20
+  pre_build:
     commands:
-      - npm ci
-
+      - echo "Installing dependencies..."
+      - npm install
+      
   build:
     commands:
+      - echo "Building React application..."
       - npm run build
-
+      
   post_build:
     commands:
-      # Sync build output to S3
-      - aws s3 sync build/ s3://devops-react-app-prod --delete
-      # Invalidate CloudFront cache so users get latest version
-      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+      - echo "Build completed"
 
 artifacts:
   files:
-    - '**/*'
-  base-directory: build
+    - build/**/*
+  name: ReactBuildArtifact
+
+cache:
+  paths:
+    - node_modules/**/*
+
