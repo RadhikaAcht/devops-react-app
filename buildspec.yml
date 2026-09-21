@@ -15,15 +15,12 @@ phases:
 
   post_build:
     commands:
-      - echo "Deploying to S3..."
-      - aws s3 sync build/ s3://devops-react-app-prod
-      - echo "Done"
+      - echo "Build complete"
 
 artifacts:
   files:
     - '**/*'
   base-directory: build
-  name: ReactBuildArtifact
 
 cache:
   paths:
