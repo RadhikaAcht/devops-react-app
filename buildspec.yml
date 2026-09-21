@@ -1,26 +1,30 @@
 version: 0.2
 
 phases:
-  pre_build:
+  install:
+    runtime-versions:
+      nodejs: 18
     commands:
       - echo "Installing dependencies..."
       - npm install
-      
+
   build:
     commands:
       - echo "Building React application..."
       - npm run build
-      
+
   post_build:
     commands:
-      - echo "Build completed"
+      - echo "Deploying to S3..."
+      - aws s3 sync build/ s3://devops-react-app-prod
+      - echo "Done"
 
 artifacts:
   files:
-    - build/**/*
+    - '**/*'
+  base-directory: build
   name: ReactBuildArtifact
 
 cache:
   paths:
     - node_modules/**/*
-
